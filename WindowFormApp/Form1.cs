@@ -50,7 +50,7 @@ namespace WindowFormApp
             // check if image is upload or not 
             if(imagePuzzleLocation.Image != null)
             {
-
+                wrapperCPP.SplitImageIntoPieces();
             }
             else
             {

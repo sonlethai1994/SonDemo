@@ -40,6 +40,6 @@ bool Wrapper::Interface::CheckInputFile(String^ pathFileUI, String^% LOG)
 
 void Wrapper::Interface::SplitImageIntoPieces()
 {
-    throw gcnew System::NotImplementedException();
+    puzzleSolver->SplitImageIntoPieces();
 }
 

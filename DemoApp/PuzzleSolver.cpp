@@ -22,6 +22,6 @@ void PuzzleSolver::CheckInputFile(std::string pathImageUI, bool& valid)
 
 void PuzzleSolver::SplitImageIntoPieces()
 {
-	puzzleSplitter = new PuzzleSplitter(puzzleImage, 50);
-
+	puzzleSplitter = new PuzzleSplitter(puzzleImage);
+	puzzleSplitter->SLICsuperpixels(500, 10);
 }
