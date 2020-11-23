@@ -5,12 +5,15 @@
 
 #include "opencv2/opencv.hpp"
 
+
 struct SeedSuperPixel
 {
 	int posX, posY;
-	int widthNeighborhood, heightNeighborhood;
+	int dimSuperPixel;
 	int id;
-	cv::Vec3f color;
+	int nbPixel;
+	float color[3];
+
 };
 
 
@@ -21,7 +24,8 @@ public:
 	PuzzleSplitter(cv::Mat image);
 
 	// Cluster 5D space [r,g,b,x,y]
-	void SLICsuperpixels(int Nsuperpixels, int nbLoop);
+	void SLICsuperpixelsCPU(int Nsuperpixels, int nbLoop, float m_ratio);
+	void SLICsuperpixelsGPU(int Nsuperpixels, int nbLoop, float m_ratio);
 
 
 
@@ -34,6 +38,7 @@ private:
 	int widthPuzzle, heightPuzzle;
 	int Nsuperpixels;
 };
+
 
 float ComputeDistanceSuperPixel(const cv::Mat &puzzleImage, const SeedSuperPixel seed, const cv::Point2i pixel, const float S);
 

@@ -20,8 +20,9 @@ void PuzzleSolver::CheckInputFile(std::string pathImageUI, bool& valid)
 		valid = false;
 }
 
-void PuzzleSolver::SplitImageIntoPieces()
+void PuzzleSolver::SplitImageIntoPieces(int NsuperpixelUI, float m_ratioUI, int nbLoopUI)
 {
 	puzzleSplitter = new PuzzleSplitter(puzzleImage);
-	puzzleSplitter->SLICsuperpixels(500, 10);
+	//puzzleSplitter->SLICsuperpixelsCPU(500, 10);
+	puzzleSplitter->SLICsuperpixelsGPU(NsuperpixelUI, m_ratioUI, nbLoopUI);
 }

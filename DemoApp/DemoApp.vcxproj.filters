@@ -33,4 +33,14 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PuzzleCuda.cuh">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="PuzzleCuda.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+  </ItemGroup>
 </Project>

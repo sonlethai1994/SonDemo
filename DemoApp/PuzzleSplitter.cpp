@@ -1,4 +1,5 @@
 #include "PuzzleSplitter.h"
+#include "PuzzleCuda.cuh"
 #include <numeric>
 
 PuzzleSplitter::PuzzleSplitter()
@@ -13,7 +14,7 @@ PuzzleSplitter::PuzzleSplitter(cv::Mat image)
 	heightPuzzle = puzzleImage.rows;
 }
 
-void PuzzleSplitter::SLICsuperpixels(int Nsuperpixels, int nbLoop)
+void PuzzleSplitter::SLICsuperpixelsCPU(int Nsuperpixels, int nbLoop, float m_ratio)
 {
 	// 1) Initialize Super pixel center by sampling N locations on a regular grid
 	// move slightly within 3x3 neighborhood to lie on the lowest gradient position
@@ -38,8 +39,7 @@ void PuzzleSplitter::SLICsuperpixels(int Nsuperpixels, int nbLoop)
 			seedSuperPix.id = seedId;
 			seedSuperPix.posX = xPos;
 			seedSuperPix.posY = yPos;
-			seedSuperPix.widthNeighborhood = S * 2;
-			seedSuperPix.heightNeighborhood = S * 2;
+			seedSuperPix.dimSuperPixel = S * 2;
 
 			seedSuperPix.color[0] = (float)puzzleImage.at<cv::Vec3b>(cv::Point(seedSuperPix.posX, seedSuperPix.posY))[0];
 			seedSuperPix.color[1] = (float)puzzleImage.at<cv::Vec3b>(cv::Point(seedSuperPix.posX, seedSuperPix.posY))[1];
@@ -68,8 +68,8 @@ void PuzzleSplitter::SLICsuperpixels(int Nsuperpixels, int nbLoop)
 
 		for (auto seed : SeedArray) {
 			// check neighborhood seed super pixel
-			for (int y = seed.posY - seed.heightNeighborhood / 2; y < seed.posY + seed.heightNeighborhood / 2; y++) {
-				for (int x = seed.posX - seed.widthNeighborhood / 2; x < seed.posX + seed.widthNeighborhood / 2; x++) {
+			for (int y = seed.posY - seed.dimSuperPixel / 2; y < seed.posY + seed.dimSuperPixel / 2; y++) {
+				for (int x = seed.posX - seed.dimSuperPixel / 2; x < seed.posX + seed.dimSuperPixel / 2; x++) {
 					if (x >= 0 && x < widthPuzzle && y >= 0 && y < heightPuzzle) {
 						offset = x + y * widthPuzzle;
 						float distance = ComputeDistanceSuperPixel(puzzleImage, seed, cv::Point(x, y), S);
@@ -145,6 +145,84 @@ void PuzzleSplitter::SLICsuperpixels(int Nsuperpixels, int nbLoop)
 		std::string fileToWrite = "C:\\Users\\Son\\Work Space\\Son Test\\GitSon\\SonDemo\\Data\\QuantizedImage\\iter" + std::to_string(i) + ".jpg";
 		cv::imwrite(fileToWrite, QuantizedImage);
 	}
+}
+
+void PuzzleSplitter::SLICsuperpixelsGPU(int Nsuperpixels, int nbLoop, float m_ratio)
+{
+	int xPos, yPos;
+	int S = (int) sqrt((widthPuzzle * heightPuzzle) / Nsuperpixels);
+	int nbSuperPixX = widthPuzzle / S;
+	int nbSuperPixY = heightPuzzle / S;
+
+	std::vector<SeedSuperPixel> SeedArray;
+	int seedId = 0;
+	for (int y = 0; y < nbSuperPixY; y++){
+		for (int x = 0; x < nbSuperPixX; x++){
+			SeedSuperPixel seedSuperPix;
+			xPos = x * S + S;
+			yPos = y * S + S;
+
+			if (xPos >= widthPuzzle || yPos >= heightPuzzle)
+				continue;
+
+			// position shifted to be in center
+			seedSuperPix.id = seedId;
+			seedSuperPix.posX = xPos;
+			seedSuperPix.posY = yPos;
+			seedSuperPix.dimSuperPixel = S * 2;
+			seedSuperPix.nbPixel = 1;
+
+			seedSuperPix.color[0] = (float)puzzleImage.at<cv::Vec3b>(cv::Point(seedSuperPix.posX, seedSuperPix.posY))[0];
+			seedSuperPix.color[1] = (float)puzzleImage.at<cv::Vec3b>(cv::Point(seedSuperPix.posX, seedSuperPix.posY))[1];
+			seedSuperPix.color[2] = (float)puzzleImage.at<cv::Vec3b>(cv::Point(seedSuperPix.posX, seedSuperPix.posY))[2];
+
+			SeedArray.push_back(seedSuperPix);
+			seedId++;
+		}
+	}
+	int Nseeds = (int)SeedArray.size();
+	int* pixelSuperSeed = new int[(size_t)widthPuzzle * (size_t)heightPuzzle];
+	float ratio = m_ratio / S;
+	ComputeDistancePixelFromSeeds(puzzleImage, &(SeedArray[0]), pixelSuperSeed, widthPuzzle, heightPuzzle, Nseeds, ratio, nbLoop);
+
+	cv::Mat QuantizedImage = puzzleImage.clone();
+	int indexSuperSeed;
+
+
+	for (int y = 0; y < heightPuzzle; y++){
+		for (int x = 0; x < widthPuzzle; x++){
+			indexSuperSeed = pixelSuperSeed[x + y * widthPuzzle];
+			QuantizedImage.at<cv::Vec3b>(cv::Point(x, y))[0] = (unsigned char)SeedArray[indexSuperSeed].color[0];
+			QuantizedImage.at<cv::Vec3b>(cv::Point(x, y))[1] = (unsigned char)SeedArray[indexSuperSeed].color[1];
+			QuantizedImage.at<cv::Vec3b>(cv::Point(x, y))[2] = (unsigned char)SeedArray[indexSuperSeed].color[2];
+		}
+	}
+
+	for (auto& seed : SeedArray)
+	{
+		cv::circle(QuantizedImage, cv::Point(seed.posX, seed.posY), 10, cv::Scalar(0, 0, 255));
+	}
+
+	cv::namedWindow("SuperPixel Image", cv::WINDOW_FREERATIO);
+	cv::imshow("SuperPixel Image", QuantizedImage);
+	cv::waitKey(0);
+	//std::string fileToWrite = "C:\\Users\\Son\\Work Space\\Son Test\\GitSon\\SonDemo\\Data\\QuantizedImage\\Quantized.jpg";
+	//cv::imwrite(fileToWrite, QuantizedImage);
+}
+
+std::vector<int> PixelDistanceFromSeeds(const int x, const int y, const std::vector<SeedSuperPixel> seeds)
+{
+	float distance;
+	std::vector<int> indexNearSeeds;
+	for (std::vector<SeedSuperPixel>::const_iterator it = seeds.begin(); it != seeds.end(); it++)
+	{
+		distance = sqrt(((*it).posX - x) * ((*it).posX - x) + ((*it).posY - y) * ((*it).posY - y));
+		if (distance < (*it).dimSuperPixel)
+		{
+			indexNearSeeds.push_back((*it).id);
+		}
+	}
+	return indexNearSeeds;
 }
 
 float ComputeDistanceSuperPixel(const cv::Mat &puzzleImage, const SeedSuperPixel seed, const cv::Point2i pixel, const float S)

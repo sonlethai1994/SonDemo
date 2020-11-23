@@ -50,7 +50,11 @@ namespace WindowFormApp
             // check if image is upload or not 
             if(imagePuzzleLocation.Image != null)
             {
-                wrapperCPP.SplitImageIntoPieces();
+                int nbLoopUI = (int)nbLoopVal.Value;
+                int NsuperPixelUI = (int)NsuperPixeVal.Value;
+                float weightRatioUI = (float)weightRatioVal.Value;
+                wrapperCPP.SplitImageIntoPieces(NsuperPixelUI, weightRatioUI, nbLoopUI);
+
             }
             else
             {

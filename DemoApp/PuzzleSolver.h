@@ -5,7 +5,6 @@
 #include <iostream>
 #include <filesystem>
 #include "opencv2/opencv.hpp"
-
 #include "PuzzleSplitter.h"
 
 class PuzzleSolver
@@ -13,7 +12,7 @@ class PuzzleSolver
 public:
 	PuzzleSolver();
 	void CheckInputFile(std::string pathImageUI, bool &valid);
-	void SplitImageIntoPieces();
+	void SplitImageIntoPieces(int NsuperpixelUI, float m_ratioUI, int nbLoopUI);
 
 private:
 	// properties files

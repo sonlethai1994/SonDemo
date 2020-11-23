@@ -10,7 +10,7 @@ namespace Wrapper {
 	public:
 		Interface();
 		bool CheckInputFile(String^ pathFileUI, String^% LOG);
-		void SplitImageIntoPieces();
+		void SplitImageIntoPieces(int NsuperpixelUI, float m_ratioUI, int nbLoopUI);
 	private:
 		PuzzleSolver* puzzleSolver;
 	};

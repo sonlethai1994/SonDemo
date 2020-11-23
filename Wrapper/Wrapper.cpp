@@ -38,8 +38,8 @@ bool Wrapper::Interface::CheckInputFile(String^ pathFileUI, String^% LOG)
     return validFile;
 }
 
-void Wrapper::Interface::SplitImageIntoPieces()
+void Wrapper::Interface::SplitImageIntoPieces(int NsuperpixelUI, float m_ratioUI, int nbLoopUI)
 {
-    puzzleSolver->SplitImageIntoPieces();
+    puzzleSolver->SplitImageIntoPieces(NsuperpixelUI, m_ratioUI, nbLoopUI);
 }
 
