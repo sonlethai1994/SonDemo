@@ -101,7 +101,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLFW\include;$(SolutionDir)third_party\OpenCV\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\GLFW\include;$(SolutionDir)third_party\OpenCV\include;$(SolutionDir)Sift;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -153,15 +153,33 @@
     <ClCompile Include="mainDemoApp.cpp" />
     <ClCompile Include="PuzzleSolver.cpp" />
     <ClCompile Include="PuzzleSplitter.cpp" />
+    <ClCompile Include="Sift\geomFuncs.cpp" />
+    <ClCompile Include="Sift\mainSift.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PuzzleSolver.h" />
     <ClInclude Include="PuzzleSplitter.h" />
+    <ClInclude Include="Sift\cudaImage.h" />
+    <ClInclude Include="Sift\cudaSift.h" />
+    <ClInclude Include="Sift\cudaSiftD.h" />
+    <ClInclude Include="Sift\cudaSiftH.h" />
+    <ClInclude Include="Sift\cudautils.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="PuzzleCuda.cu">
       <FileType>Document</FileType>
     </CudaCompile>
+    <CudaCompile Include="Sift\cudaImage.cu" />
+    <CudaCompile Include="Sift\cudaSiftD.cu">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </CudaCompile>
+    <CudaCompile Include="Sift\cudaSiftH.cu">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </CudaCompile>
+    <CudaCompile Include="Sift\match.cu" />
+    <CudaCompile Include="Sift\matching.cu" />
     <None Include="PuzzleCuda.cuh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

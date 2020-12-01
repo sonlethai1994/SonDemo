@@ -12,6 +12,8 @@
 extern "C"
 void ComputeDistancePixelFromSeeds(cv::Mat puzzleImage, SeedSuperPixel* seeds, int* pixelSuperSeed, const int width,const int height,const int Nseeds, const float ratio, const int nbLoop);
 
+extern "C"
+void ComputeVoronoiDiagram(SeedSuperPixel * seeds, int* pixelSuperSeed, const int width, const int height, const int Nseeds);
 
 
 #endif // !PUZZLE_CUDA

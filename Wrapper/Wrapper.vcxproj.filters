@@ -44,6 +44,9 @@
     <ClCompile Include="..\DemoApp\PuzzleSplitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\DemoApp\Sift\geomFuncs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -57,6 +60,21 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\DemoApp\PuzzleCuda.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\cudaImage.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\cudaSiftD.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\cudaSiftH.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\match.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\matching.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

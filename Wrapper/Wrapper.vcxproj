@@ -83,7 +83,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLFW\include;$(SolutionDir)third_party\OpenCV\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)third_party\GLFW\include;$(SolutionDir)third_party\OpenCV\include;$(SolutionDir)Sift;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opencv_world450d.lib;cudart.lib;cudart_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="..\DemoApp\PuzzleSolver.cpp" />
     <ClCompile Include="..\DemoApp\PuzzleSplitter.cpp" />
+    <ClCompile Include="..\DemoApp\Sift\geomFuncs.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -156,6 +157,16 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\DemoApp\PuzzleCuda.cu" />
+    <CudaCompile Include="..\DemoApp\Sift\cudaImage.cu" />
+    <CudaCompile Include="..\DemoApp\Sift\cudaSiftD.cu">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </CudaCompile>
+    <CudaCompile Include="..\DemoApp\Sift\cudaSiftH.cu" />
+    <CudaCompile Include="..\DemoApp\Sift\match.cu" />
+    <CudaCompile Include="..\DemoApp\Sift\matching.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -24,12 +24,33 @@
     <ClCompile Include="PuzzleSplitter.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sift\geomFuncs.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sift\mainSift.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PuzzleSolver.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="PuzzleSplitter.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Sift\cudaImage.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Sift\cudaSift.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Sift\cudaSiftD.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Sift\cudaSiftH.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Sift\cudautils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -40,6 +61,21 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="PuzzleCuda.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Sift\cudaImage.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Sift\cudaSiftD.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Sift\cudaSiftH.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Sift\match.cu">
+      <Filter>Fichiers sources</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Sift\matching.cu">
       <Filter>Fichiers sources</Filter>
     </CudaCompile>
   </ItemGroup>

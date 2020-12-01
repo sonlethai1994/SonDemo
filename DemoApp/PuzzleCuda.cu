@@ -1,5 +1,26 @@
 #include "PuzzleCuda.cuh"
 
+__global__ void ComputeSpatialDistancePixelSeeds(SeedSuperPixel* seeds, int* closestSeed, int width, int height, int Nseeds)
+{
+	int x = threadIdx.x + blockIdx.x * blockDim.x;
+	int y = threadIdx.y + blockIdx.y * blockDim.y;
+	int offset = x + y * width;
+
+	float minDist = 100000.0f;
+	float distSpatial = 0;
+	int minSeedIndex = 0;
+	if (x >= 0 && x < width && y >= 0 && y < height){
+		for (int k = 0; k < Nseeds; k++){
+			distSpatial = sqrtf((x - seeds[k].posX) * (x - seeds[k].posX) + (y - seeds[k].posY) * (y - seeds[k].posY));
+			if (distSpatial < minDist){
+				minDist = distSpatial;
+				minSeedIndex = k;
+			}
+		}
+		closestSeed[offset] = minSeedIndex;
+	}
+}
+
 __global__ void ComputeDistancePixelSeeds(unsigned char* rgbData, SeedSuperPixel* seeds, int* closestSeed, int width, int height, int Nseeds, float ratio)
 {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -97,7 +118,7 @@ void ComputeDistancePixelFromSeeds(cv::Mat puzzleImage, SeedSuperPixel* seeds, i
 	cudaMemset(d_closestSeed, 0, width * height * sizeof(int));
 
 	dim3 threads(16, 16);
-	dim3 blocks( (puzzleImage.cols + threads.x - 1)/ (threads.x), (puzzleImage.rows + threads.y - 1)/ (threads.y));
+	dim3 blocks( (width + threads.x - 1)/ (threads.x), (height + threads.y - 1)/ (threads.y));
 
 	dim3 threadsReset(16);
 	dim3 blocksReset((Nseeds + threadsReset.x - 1) / threadsReset.x);
@@ -111,6 +132,25 @@ void ComputeDistancePixelFromSeeds(cv::Mat puzzleImage, SeedSuperPixel* seeds, i
 	cudaMemcpy(pixelSuperSeed, d_closestSeed, width * height * sizeof(int), cudaMemcpyDeviceToHost);
 	cudaMemcpy(seeds, d_seeds, sizeof(SeedSuperPixel) * Nseeds, cudaMemcpyDeviceToHost);
 	cudaFree(d_puzzleImageRGB);
+	cudaFree(d_seeds);
+	cudaFree(d_closestSeed);
+}
+
+void ComputeVoronoiDiagram(SeedSuperPixel* seeds, int* pixelSuperSeed, const int width, const int height, const int Nseeds)
+{
+	SeedSuperPixel* d_seeds;
+	cudaMalloc((void**)&d_seeds, sizeof(SeedSuperPixel) * Nseeds);
+	cudaMemcpy(d_seeds, seeds, sizeof(SeedSuperPixel) * Nseeds, cudaMemcpyHostToDevice);
+
+	int* d_closestSeed;
+	cudaMalloc((void**)&d_closestSeed, width * height * sizeof(int));
+	cudaMemset(d_closestSeed, 0, width * height * sizeof(int));
+
+	dim3 threads(16, 16);
+	dim3 blocks((width + threads.x - 1) / (threads.x), (height + threads.y - 1) / (threads.y));
+
+	ComputeSpatialDistancePixelSeeds<<<blocks,threads>>>(d_seeds, d_closestSeed, width, height, Nseeds);
+	cudaMemcpy(pixelSuperSeed, d_closestSeed, width * height * sizeof(int), cudaMemcpyDeviceToHost);
 	cudaFree(d_seeds);
 	cudaFree(d_closestSeed);
 }
